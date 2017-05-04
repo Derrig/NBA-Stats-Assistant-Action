@@ -1,0 +1,27 @@
+{
+  "name": "nba-stats",
+  "version": "1.0.0",
+  "description": "NBA Stats - API.ai backend",
+  "main": "webhook.js",
+  "dependencies": {
+    "apiai": "^4.0.2",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "fast-levenshtein": "^2.0.6",
+    "nba.js": "^0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Derrig/NBA-Stats-Action.git"
+  },
+  "author": "Eric Wang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Derrig/NBA-Stats-Action/issues"
+  },
+  "homepage": "https://github.com/Derrig/NBA-Stats-Action#readme"
+}
