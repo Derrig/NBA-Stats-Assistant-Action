@@ -4,6 +4,7 @@
   "description": "NBA Stats - API.ai backend",
   "main": "webhook.js",
   "dependencies": {
+    "actions-on-google": "^1.0.9",
     "apiai": "^4.0.2",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",

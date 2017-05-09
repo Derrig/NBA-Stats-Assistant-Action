@@ -12,33 +12,53 @@ rest.post('/hook', function (req,res){
     console.log('hook request');
     var reqBody = req.body;
     //console.log(reqBody)
-    var givenName = reqBody.result.parameters['given-name']
-    var lastName = reqBody.result.parameters['last-name']
-    var nbaName = reqBody.result.parameters['NBA_Name']
-
-    if(nbaName !== ""){
-        stats.tester(stats.getID(nbaName))
-            .then(function response(ppg){
-                    var response = nbaName + ' is averaging '
-                                    + ppg + ' points per game.'
-                    res.json({
-                        speech:response,
-                        displayText:response,
-                        source:'stats.nba.com'
-                    })
+    if(reqBody.result.parameters.date !== null){
+        if(reqBody.result.parameters.date === ''){
+            var dateObj = new Date()
+            var date = dateObj.toISOString().substring(0,10).replace(/-/g,'')
+        }
+        else{
+            var date = reqBody.result.parameters.date
+        }
+        console.log(date)
+        date = date.replace(/-/g,'')
+        stats.games(date).then(response => {
+            res.json({
+                speech:response,
+                displayText:response,
+                source:'stats.nba.com'
             })
+        })
     }
-    else{
-        stats.tester(stats.getID(givenName + ' ' + lastName))
-            .then(function response(ppg){
-                    var response = givenName + ' ' + lastName + ' is averaging '
-                                    + ppg + ' points per game.'
+    else{ //ppg
+        var givenName = reqBody.result.parameters['given-name']
+        var lastName = reqBody.result.parameters['last-name']
+        var nbaName = reqBody.result.parameters['NBA_Name']
+
+        if(nbaName !== ""){
+            stats.tester(stats.getID(nbaName))
+                .then(function response(ppg){
+                    var response = nbaName + ' averaged '
+                                   + ppg + ' points per game in his peak NBA season.'
                     res.json({
                         speech:response,
                         displayText:response,
                         source:'stats.nba.com'
                     })
-            })
+                })
+        }
+        else{
+            stats.tester(stats.getID(givenName + ' ' + lastName))
+                .then(function response(ppg){
+                        var response = givenName + ' ' + lastName + ' averaged '
+                                       + ppg + ' points per game in his peak NBA season.'
+                        res.json({
+                            speech:response,
+                            displayText:response,
+                            source:'stats.nba.com'
+                        })
+                })
+        }
     }
 })
 
