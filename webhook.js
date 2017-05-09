@@ -12,7 +12,7 @@ rest.post('/hook', function (req,res){
     console.log('hook request');
     var reqBody = req.body;
     //console.log(reqBody)
-    if(reqBody.result.parameters.date !== null){
+    if(reqBody.result.metadata.intentName === 'NBA Scores'){
         if(reqBody.result.parameters.date === ''){
             var dateObj = new Date()
             var date = dateObj.toISOString().substring(0,10).replace(/-/g,'')
