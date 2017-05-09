@@ -20,7 +20,7 @@ exports.fuzzyMatch = function(player,arr){
 
 exports.getID = function(playerStr){
     var fuzzyPlayer = this.fuzzyMatch(playerStr,playerKeys)
-    //console.log(fuzzyPlayer)
+    console.log(players[fuzzyPlayer][0])
     return players[fuzzyPlayer][0]
 }
 
