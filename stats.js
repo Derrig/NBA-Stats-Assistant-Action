@@ -1,21 +1,40 @@
 const nba = require('nba.js').default
 const fs = require('fs')
 const lev = require('fast-levenshtein')
+const moment = require('moment')
 
 const constants = require('./constants.js')
 
 const players = JSON.parse(fs.readFileSync('./jsonplayerdict','utf8'))
 const playerKeys = Object.keys(players)
 
-function genGames(res){
-    var res = res['games'][0]
-    var homeTeam = constants.teamIDMap.get(parseInt(res['hTeam']['teamId']))
-    var visitTeam = constants.teamIDMap.get(parseInt(res['vTeam']['teamId']))
-    var homeScore = res['hTeam']['score']
-    var visitScore = res['vTeam']['score']
-    var startTime = res['startDateEastern']
+function conError(res){
+    return 'Sorry, I\'m having trouble connecting to stats.nba.com!'
+}
 
-    if(res['statusNum'] === 3){ //game over
+function getSingleGame(hTeamId,homeScore,vTeamId,visitScore,statusNum,startTimeUTC){
+    var homeTeam = constants.teamIDMap.get(hTeamId)
+    var visitTeam = constants.teamIDMap.get(vTeamId)
+    var startTime = moment(startTimeUTC)
+    if(statusNum === 1){ //game has not started
+        return 'The ' + visitTeam + ' are playing the ' + homeTeam + ' at '
+                + startTime.format("h:mm a") + ' Eastern Standard Time.'
+    }
+    else if(statusNum === 2){ //game in progress
+        if(parseInt(homeScore) > parseInt(visitScore)){
+            return 'The ' + homeTeam + ' are leading the ' + visitTeam + ", "
+                    + homeScore + '-' + visitScore + '.'
+        }
+        else if(parseInt(homeScore) < parseInt(visitScore)){
+            return 'The ' + visitTeam + ' are leading the ' + homeTeam + ", "
+                    + visitScore + '-' + homeScore + '.'
+        }
+        else{
+            return 'The ' + visitTeam + ' are tied with the ' + homeTeam + ", "
+                    + visitScore + '-' + homeScore + '.'
+        }
+    }
+    else if(statusNum === 3){ //game is over
         if(parseInt(homeScore) > parseInt(visitScore)){
             return 'The ' + homeTeam + ' beat the ' + visitTeam + ", "
                     + homeScore + '-' + visitScore + '.'
@@ -25,16 +44,31 @@ function genGames(res){
                     + visitScore + '-' + homeScore + '.'
         }
     }
-    else if(res['statusNum'] === 2){ //game in progress
-        return 'to be implemented'
+}
+
+function genGames(res){
+    if(res.numGames == 0){
+        return "There are no games scheduled for this day."
     }
-    else if(res['statusNum'] === 1){ //game to start
-        return 'to be implemented'
+    //loop through all games
+    var output = []
+    for(var i=0;i<res['games'].length;i++){
+        var game = res['games'][i]
+        var statusNum = game['statusNum']
+        var startTimeUTC = game['startTimeUTC']
+        var homeScore = game['hTeam']['score']
+        var visitScore = game['vTeam']['score']
+        var homeTeamId = parseInt(game['hTeam']['teamId'])
+        var visitTeamId = parseInt(game['vTeam']['teamId'])
+        output[i] = getSingleGame(homeTeamId,homeScore,visitTeamId,
+                                    visitScore,statusNum,startTimeUTC)
+        console.log(output[i])
     }
+    return output.join(' ')
 }
 
 exports.games = function(date){
-    return nba.data.scoreboard({date:date}).then(genGames)
+    return nba.data.scoreboard({date:date}).then(genGames, conError)
 }
 
 exports.fuzzyMatch = function(player,arr){
@@ -63,7 +97,7 @@ exports.round = function(value, decimals) {
 exports.ppg = function(player){
     var regSeason = player['SeasonTotalsRegularSeason']
     var maxPts = -1
-    for(i=0;i<regSeason.length;i++){
+    for(var i=0;i<regSeason.length;i++){
         if(regSeason[i]['pts']>maxPts){
             maxPts = regSeason[i]['pts']
         }
@@ -90,3 +124,4 @@ exports.tester = function(pid){
 
 //nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:'252'})
 //                                .then(ts)
+//http://stats.nba.com/media/players/230x185/2546.png
