@@ -5,7 +5,7 @@ const moment = require('moment')
 
 const constants = require('./constants.js')
 
-const players = JSON.parse(fs.readFileSync('./jsonplayerdict','utf8'))
+const players = JSON.parse(fs.readFileSync('data/jsonplayerdict'))
 const playerKeys = Object.keys(players)
 
 function conError(res){
