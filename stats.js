@@ -1,4 +1,8 @@
-const nba = require('nba.js').default
+/**
+ * stats.js generates the proper string response from the recieved data.
+ * It makes no web calls.
+ */
+
 const fs = require('fs')
 const lev = require('fast-levenshtein')
 const moment = require('moment')
@@ -7,10 +11,6 @@ const constants = require('./constants.js')
 
 const players = JSON.parse(fs.readFileSync('data/jsonplayerdict'))
 const playerKeys = Object.keys(players)
-
-function conError(res){
-    return 'Sorry, I\'m having trouble connecting to stats.nba.com!'
-}
 
 function getSingleGame(hTeamId,homeScore,vTeamId,visitScore,statusNum,startTimeUTC){
     var homeTeam = constants.teamIDMap.get(hTeamId)
@@ -46,7 +46,7 @@ function getSingleGame(hTeamId,homeScore,vTeamId,visitScore,statusNum,startTimeU
     }
 }
 
-function genGames(res){
+exports.genGames = function(res){
     if(res.numGames == 0){
         return "There are no games scheduled for this day."
     }
@@ -67,10 +67,7 @@ function genGames(res){
     return output.join(' ')
 }
 
-exports.games = function(date){
-    return nba.data.scoreboard({date:date}).then(genGames, conError)
-}
-
+//this is no longer really needed...
 exports.fuzzyMatch = function(player,arr){
     var leastPlayer = arr[0]
     var least = lev.get(player,arr[0])
@@ -90,37 +87,46 @@ exports.getID = function(playerStr){
     return players[fuzzyPlayer][0]
 }
 
-exports.round = function(value, decimals) {
-  return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+function round(value, decimals) {
+    //must do toFixed(1) e.g. 25.02 -> 25 instead of desired 25.0
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals).toFixed(1);
 }
 
-exports.ppg = function(player){
-    var regSeason = player['SeasonTotalsRegularSeason']
+exports.ppg = function(nbaName,playerCareerStats){
+    var careerPerGame = playerCareerStats['CareerTotalsRegularSeason'][0]
+    console.log(careerPerGame)
+    var pts = round(careerPerGame['pts'],1)
+    var response = nbaName + ' has a career average of '
+                   + pts + ' points per game.'
+
+    return(response)
+}
+
+exports.rpg = function(nbaName,playerCareerStats){
+    var regSeason = playerCareerStats['SeasonTotalsRegularSeason']
     var maxPts = -1
     for(var i=0;i<regSeason.length;i++){
-        if(regSeason[i]['pts']>maxPts){
+        if(regSeason[i]['r']>maxPts){
             maxPts = regSeason[i]['pts']
         }
     }
-    return(maxPts.toFixed(1))
-    //console.log(regSeason[regSeason.length-1]['pts'])
+    maxPts = maxPts.toFixed(1)
+    var response = nbaName + ' averaged '
+                   + maxPts + ' points per game in his peak NBA season.'
+
+    return(response)
 }
 
-exports.ts = function(player){
-    var regSeason = player['SeasonTotalsRegularSeason']
-    var curSeason = regSeason[regSeason.length-1]
-    var fga = curSeason['fga']
-    var fta = curSeason['fta']
-    var pts = curSeason['pts']
-    var ts = pts/(2*(fga+.44*fta))
-    return this.round(ts,3)
-    //console.log(this.round(ts,3))
-}
-
-exports.tester = function(pid){
-    return nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:pid})
-                                    .then(this.ppg)
-}
+// exports.ts = function(player){
+//     var regSeason = player['SeasonTotalsRegularSeason']
+//     var curSeason = regSeason[regSeason.length-1]
+//     var fga = curSeason['fga']
+//     var fta = curSeason['fta']
+//     var pts = curSeason['pts']
+//     var ts = pts/(2*(fga+.44*fta))
+//     return this.round(ts,3)
+//     //console.log(this.round(ts,3))
+// }
 
 //nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:'252'})
 //                                .then(ts)
