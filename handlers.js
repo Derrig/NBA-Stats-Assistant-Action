@@ -12,7 +12,8 @@ function conError(res){
     return 'Sorry, I\'m having trouble connecting to stats.nba.com!'
 }
 
-exports.scores = function(reqBody,res,timestamp){
+exports.scores = function(reqBody,res){
+    var timestamp = req.result.timestamp
     if(reqBody.result.parameters.date === ''){ //use cur date if none provided
         var dateObj = moment(timestamp) //utc time
         dateObj.subtract(4,'hours')    //change to EST time
@@ -36,11 +37,12 @@ exports.scores = function(reqBody,res,timestamp){
         })
 }
 
-exports.ppg = function(reqBody,res){
+exports.statPerGame = function(reqBody,res){
+    var stat = reqBody.result.parameters['Stat_Type_Per_Game']
     var nbaName = reqBody.result.parameters['NBA_Name']
     var pid = stats.getID(reqBody.result.parameters['NBA_Name'])
     nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:pid})
-             .then(res => stats.ppg(nbaName,res))
+             .then(res => stats.genStatPerGame(stat,nbaName,res))
              .then(response => {
                  res.json({
                      speech:response,
@@ -48,12 +50,4 @@ exports.ppg = function(reqBody,res){
                      source:'stats.nba.com'
                  })
              })
-}
-
-//unimplemented
-exports.rpg = function(reqBody,res){
-    var givenName = reqBody.result.parameters['given-name']
-    var lastName = reqBody.result.parameters['last-name']
-    var nbaName = reqBody.result.parameters['NBA_Name']
-
 }

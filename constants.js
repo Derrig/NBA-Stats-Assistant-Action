@@ -30,3 +30,10 @@ exports.teamIDMap = new hm.HashMap(1610612738, 'Celtics',
                                    1610612763, 'Grizzlies',
                                    1610612740, 'Pelicans',
                                    1610612759, 'Spurs')
+
+//nbaShorthand is used to access the response json returned by stats.nba.com
+exports.perGameDict = {ppg:{statName:'points',nbaShorthand:'pts'},
+                       rpg:{statName:'rebounds',nbaShorthand:'reb'},
+                       apg:{statName:'assists',nbaShorthand:'ast'},
+                       spg:{statName:'steals',nbaShorthand:'stl'},
+                       bpg:{statName:'blocks',nbaShorthand:'blk'}}

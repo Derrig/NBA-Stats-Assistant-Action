@@ -92,29 +92,23 @@ function round(value, decimals) {
     return Number(Math.round(value+'e'+decimals)+'e-'+decimals).toFixed(1);
 }
 
-exports.ppg = function(nbaName,playerCareerStats){
+exports.genStatPerGame = function(stat,nbaName,playerCareerStats){
     var careerPerGame = playerCareerStats['CareerTotalsRegularSeason'][0]
-    console.log(careerPerGame)
-    var pts = round(careerPerGame['pts'],1)
-    var response = nbaName + ' has a career average of '
-                   + pts + ' points per game.'
-
-    return(response)
+    var nbaShorthand = constants.perGameDict[stat].nbaShorthand
+    var statName = constants.perGameDict[stat].statName
+    var num = careerPerGame[nbaShorthand]
+    var response = nbaName + ' has a career average of ' +
+                    num + ' ' + statName + ' per game.'
+    return response
 }
 
 exports.rpg = function(nbaName,playerCareerStats){
-    var regSeason = playerCareerStats['SeasonTotalsRegularSeason']
-    var maxPts = -1
-    for(var i=0;i<regSeason.length;i++){
-        if(regSeason[i]['r']>maxPts){
-            maxPts = regSeason[i]['pts']
-        }
-    }
-    maxPts = maxPts.toFixed(1)
-    var response = nbaName + ' averaged '
-                   + maxPts + ' points per game in his peak NBA season.'
+    var careerPerGame = playerCareerStats['CareerTotalsRegularSeason'][0]
+    var rebs = round(careerPerGame['reb'],1)
+    var response = nbaName + ' has a career average of '
+                   + rebs + ' rebounds per game.'
 
-    return(response)
+    return response
 }
 
 // exports.ts = function(player){

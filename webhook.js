@@ -15,22 +15,19 @@ rest.post('/hook', function (req,res){
     console.log('hook request')
     var reqBody = req.body
     var intent = reqBody.result.metadata.intentName
-    //console.log(reqBody)
-    if(intent === 'NBA Scores'){
-        handlers.scores(reqBody,res,req.timestamp)
-    }
-    else if(intent === 'Points Per Game'){
-        handlers.ppg(reqBody,res)
-    }
-    else if(intent === 'Rebounds Per Game'){
-        //handlers.rpg(reqBody,res)
-    }
-    else{
-        res.json({
-            speech:'I\'m not sure what you are asking.',
-            displayText:response,
-            source:'stats.nba.com'
-        })
+    switch(intent){
+        case ('NBA Scores'):
+            handlers.scores(reqBody,res)
+            break
+        case ('Stat Per Game'):
+            handlers.statPerGame(reqBody,res)
+            break
+        default:
+            res.json({
+                    speech:'I\'m not sure what you are asking.',
+                    displayText:response,
+                    source:''
+            })
     }
 })
 
