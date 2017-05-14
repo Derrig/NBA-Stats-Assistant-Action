@@ -97,17 +97,13 @@ exports.genStatPerGame = function(stat,nbaName,playerCareerStats){
     var nbaShorthand = constants.perGameDict[stat].nbaShorthand
     var statName = constants.perGameDict[stat].statName
     var num = careerPerGame[nbaShorthand]
+    if(num === null){ //likely means that stat was not recorded yet.
+        return statName.charAt(0).toUpperCase() + statName.slice(1)
+                + ' were not recorded before '
+                + constants.firstRecorded[nbaShorthand] + '.'
+     }
     var response = nbaName + ' has a career average of ' +
                     num + ' ' + statName + ' per game.'
-    return response
-}
-
-exports.rpg = function(nbaName,playerCareerStats){
-    var careerPerGame = playerCareerStats['CareerTotalsRegularSeason'][0]
-    var rebs = round(careerPerGame['reb'],1)
-    var response = nbaName + ' has a career average of '
-                   + rebs + ' rebounds per game.'
-
     return response
 }
 

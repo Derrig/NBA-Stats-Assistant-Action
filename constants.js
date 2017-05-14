@@ -36,4 +36,7 @@ exports.perGameDict = {ppg:{statName:'points',nbaShorthand:'pts'},
                        rpg:{statName:'rebounds',nbaShorthand:'reb'},
                        apg:{statName:'assists',nbaShorthand:'ast'},
                        spg:{statName:'steals',nbaShorthand:'stl'},
-                       bpg:{statName:'blocks',nbaShorthand:'blk'}}
+                       bpg:{statName:'blocks',nbaShorthand:'blk'},
+                       tovpg:{statName:'turnovers',nbaShorthand:'tov'}}
+
+exports.firstRecorded = {pts: 1946,reb:1950,ast:1946,stl:1973,blk:1973,tov:1977}
