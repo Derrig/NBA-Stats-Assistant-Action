@@ -88,8 +88,8 @@ exports.getID = function(playerStr){
 }
 
 function round(value, decimals) {
-    //must do toFixed(1) e.g. 25.02 -> 25 instead of desired 25.0
-    return Number(Math.round(value+'e'+decimals)+'e-'+decimals).toFixed(1);
+    //must do toFixed(decimals) e.g. 25.02 -> 25 instead of desired 25.0
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals).toFixed(decimals);
 }
 
 exports.genStatPerGame = function(stat,nbaName,playerCareerStats){
@@ -98,25 +98,27 @@ exports.genStatPerGame = function(stat,nbaName,playerCareerStats){
     var statName = constants.perGameDict[stat].statName
     var num = careerPerGame[nbaShorthand]
     if(num === null){ //likely means that stat was not recorded yet.
-        return statName.charAt(0).toUpperCase() + statName.slice(1)
+        return 'Sorry, ' //+statName.charAt(0).toUpperCase() + statName.slice(1)
+                + statName
                 + ' were not recorded before '
                 + constants.firstRecorded[nbaShorthand] + '.'
-     }
+    }
+    num = round(num,1)
     var response = nbaName + ' has a career average of ' +
                     num + ' ' + statName + ' per game.'
     return response
 }
 
-// exports.ts = function(player){
-//     var regSeason = player['SeasonTotalsRegularSeason']
-//     var curSeason = regSeason[regSeason.length-1]
-//     var fga = curSeason['fga']
-//     var fta = curSeason['fta']
-//     var pts = curSeason['pts']
-//     var ts = pts/(2*(fga+.44*fta))
-//     return this.round(ts,3)
-//     //console.log(this.round(ts,3))
-// }
+exports.genTS = function(nbaName,playerCareerStats){
+    var careerPerGame = playerCareerStats['CareerTotalsRegularSeason'][0]
+    var fga = careerPerGame['fga']
+    var fta = careerPerGame['fta']
+    var pts = careerPerGame['pts']
+    var ts = pts/(2*(fga+.44*fta))
+    ts = round(ts*100,1) //convert .52321... to 52.3...
+    return nbaName + ' has a career true shooting percentage of ' + ts + '%.'
+    //console.log(this.round(ts,3))
+}
 
 //nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:'252'})
 //                                .then(ts)

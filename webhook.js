@@ -22,6 +22,9 @@ rest.post('/hook', function (req,res){
         case ('Stat Per Game'):
             handlers.statPerGame(reqBody,res)
             break
+        case('True Shooting'):
+            handlers.trueShooting(reqBody,res)
+            break
         default:
             res.json({
                     speech:'I\'m not sure what you are asking.',

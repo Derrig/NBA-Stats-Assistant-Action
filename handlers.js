@@ -13,7 +13,7 @@ function conError(res){
 }
 
 exports.scores = function(reqBody,res){
-    var timestamp = req.result.timestamp
+    var timestamp = reqBody.result.timestamp
     if(reqBody.result.parameters.date === ''){ //use cur date if none provided
         var dateObj = moment(timestamp) //utc time
         dateObj.subtract(4,'hours')    //change to EST time
@@ -40,9 +40,23 @@ exports.scores = function(reqBody,res){
 exports.statPerGame = function(reqBody,res){
     var stat = reqBody.result.parameters['Stat_Type_Per_Game']
     var nbaName = reqBody.result.parameters['NBA_Name']
-    var pid = stats.getID(reqBody.result.parameters['NBA_Name'])
+    var pid = stats.getID(nbaName)
     nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:pid})
              .then(res => stats.genStatPerGame(stat,nbaName,res))
+             .then(response => {
+                 res.json({
+                     speech:response,
+                     displayText:response,
+                     source:'stats.nba.com'
+                 })
+             })
+}
+
+exports.trueShooting = function(reqBody,res){
+    var nbaName = reqBody.result.parameters['NBA_Name']
+    var pid = stats.getID(nbaName)
+    nba.stats.playerCareerStats({PerMode:'Totals',PlayerID:pid})
+             .then(res => stats.genTS(nbaName,res))
              .then(response => {
                  res.json({
                      speech:response,
