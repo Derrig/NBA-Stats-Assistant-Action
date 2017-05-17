@@ -18,7 +18,7 @@ exports.scores = function(reqBody,res){
         var dateObj = moment(timestamp) //utc time
         dateObj.subtract(4,'hours')    //change to EST time
         if(dateObj.hours() <= 3){ //display yesterday if earlier than 4:00 EST
-            m.subtract(1,'days')
+            dateObj.subtract(1,'days')
         }
         date = dateObj.format('YMMDD') //change to 20170504 format
     }
