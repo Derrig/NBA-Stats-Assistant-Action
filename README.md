@@ -14,4 +14,4 @@ Built using [api.ai](http://www.api.ai).
 * Player true shooting average
 
 ### Try me out
-https://derrig.me/projects/nba-stats/
+http://derrig.me/projects/nba-stats/
