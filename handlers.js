@@ -6,6 +6,7 @@
 
 const nba = require('nba.js').default
 const stats = require('./stats.js')
+const error = require('./error.js')
 const moment = require('moment')
 
 function conError(res){
@@ -27,7 +28,8 @@ exports.scores = function(reqBody,res){
         date = date.replace(/-/g,'') //change to 20170504 format
     }
     console.log(date)
-    nba.data.scoreboard({date:date}).then(stats.genGames, conError)
+    nba.data.scoreboard({date:date})
+        .then(res => stats.genGames(res,date),error.scoresError)
         .then(response => {
             res.json({
                 speech:response,

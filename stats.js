@@ -8,6 +8,7 @@ const lev = require('fast-levenshtein')
 const moment = require('moment')
 
 const constants = require('./constants.js')
+const misc = require('./misc.js')
 
 const players = JSON.parse(fs.readFileSync('data/jsonplayerdict'))
 const playerKeys = Object.keys(players)
@@ -46,9 +47,19 @@ function getSingleGame(hTeamId,homeScore,vTeamId,visitScore,statusNum,startTimeU
     }
 }
 
-exports.genGames = function(res){
+exports.genGames = function(res,date){
+    moment.updateLocale('en',constants.calendar)
+    var date = moment(date)
     if(res.numGames == 0){
-        return "There are no games scheduled for this day."
+        var toBe = ''
+        if(date.isSameOrAfter(new Date(),'day')){
+            var toBe = 'are'
+        }
+        else{
+            var toBe = 'were'
+        }
+        return 'There '+ toBe +' no games scheduled '
+                + misc.firstToLower(date.calendar()) + '.'
     }
     //loop through all games
     var output = []
@@ -64,6 +75,8 @@ exports.genGames = function(res){
                                     visitScore,statusNum,startTimeUTC)
         console.log(output[i])
     }
+    output[0] = date.calendar() + ', '
+                + misc.firstToLower(output[0])
     return output.join(' ')
 }
 

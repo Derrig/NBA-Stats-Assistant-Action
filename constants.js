@@ -40,3 +40,11 @@ exports.perGameDict = {ppg:{statName:'points',nbaShorthand:'pts'},
                        tovpg:{statName:'turnovers',nbaShorthand:'tov'}}
 
 exports.firstRecorded = {pts: 1946,reb:1950,ast:1946,stl:1973,blk:1973,tov:1977}
+
+//locale formatting
+exports.calendar = {calendar:{lastDay: '[Yesterday]',
+                              sameDay: '[Today]',
+                              nextDay: '[Tomorrow]',
+                              lastWeek:'[Last] dddd',
+                              nextWeek:'[On] dddd',
+                              sameElse:'[On] MMMM Do'}}
