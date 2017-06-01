@@ -67,3 +67,18 @@ exports.trueShooting = function(reqBody,res){
                  })
              })
 }
+
+exports.playerSummary = function(reqBody, res){
+    var nbaName = reqBody.result.parameters['NBA_Name']
+    var pid = stats.getID(nbaName)
+    nba.stats.playerCareerStats({PerMode:'Totals',PlayerID:pid})
+             .then(res => stats.genPlayerSummary(nbaName,res))
+             .then(responseObj => {
+                 res.json({
+                     speech:responseObj.speech,
+                     displayText:responseObj.displayText,
+                     source:'stats.nba.com'
+                 })
+             })
+
+}

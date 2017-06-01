@@ -25,6 +25,9 @@ rest.post('/hook', function (req,res){
         case('True Shooting'):
             handlers.trueShooting(reqBody,res)
             break
+        case('Player Summary'):
+            handlers.playerSummary(reqBody,res)
+            break
         default:
             res.json({
                     speech:'I\'m not sure what you are asking.',

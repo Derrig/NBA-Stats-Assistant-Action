@@ -122,15 +122,48 @@ exports.genStatPerGame = function(stat,nbaName,playerCareerStats){
     return response
 }
 
-exports.genTS = function(nbaName,playerCareerStats){
-    var careerPerGame = playerCareerStats['CareerTotalsRegularSeason'][0]
-    var fga = careerPerGame['fga']
-    var fta = careerPerGame['fta']
-    var pts = careerPerGame['pts']
+function getTSVal(playerCareerStats){
+    var careerTotals = playerCareerStats['CareerTotalsRegularSeason'][0]
+    var fga = careerTotals['fga']
+    var fta = careerTotals['fta']
+    var pts = careerTotals['pts']
     var ts = pts/(2*(fga+.44*fta))
-    ts = round(ts*100,1) //convert .52321... to 52.3...
+    return round(ts*100,1) //convert .52321... to 52.3...
+}
+
+exports.genTS = function(nbaName,playerCareerStats){
+    var ts = getTSVal(playerCareerStats)
     return nbaName + ' has a career true shooting percentage of ' + ts + '%.'
     //console.log(this.round(ts,3))
+}
+
+exports.genPlayerSummary = function(nbaName,playerCareerStats){
+    //var ts = getTSVal(playerCareerStats)
+    var careerTotals = playerCareerStats['CareerTotalsRegularSeason'][0]
+    var gamesPlayed = careerTotals['gp']
+    var ppg = round(careerTotals['pts']/gamesPlayed,1)
+    var apg = round(careerTotals['ast']/gamesPlayed,1)
+    var rpg = round(careerTotals['reb']/gamesPlayed,1)
+    var spg = round(careerTotals['stl']/gamesPlayed,1)
+    var bpg = round(careerTotals['blk']/gamesPlayed,1)
+    var fg_pct = round(careerTotals['fg_pct']*100,0)
+    var fg3_pct = round(careerTotals['fg3_pct']*100,0)
+    var ft_pct = round(careerTotals['ft_pct']*100,0)
+    var displayText = nbaName + ' has a career average of ' + ppg + ' pts '
+    var speech = nbaName + ' has a career average of ' + ppg + ' points, '
+    if(parseInt(apg)>parseInt(rpg)){
+        displayText += apg + ' ast ' + rpg + ' reb ' + 'per game '
+        speech += apg + ' assists, and ' + rpg + ' rebounds ' + 'per game '
+    }
+    else{
+        displayText += rpg + ' reb ' + apg + ' ast ' + 'per game '
+        speech += rpg + ' rebounds, and ' + apg + ' assists ' + 'per game '
+    }
+    displayText += 'on ' + fg_pct+'/'+fg3_pct+'/'+ft_pct+ ' shooting, '
+    speech += 'on ' + fg_pct+'/'+fg3_pct+'/'+ft_pct+ ' shooting, '
+    displayText += 'with ' + spg + ' stl and ' + bpg + ' blk per game.'
+    speech += 'with ' + spg + ' steals and ' + bpg + ' blocks per game.'
+    return {speech:speech,displayText:displayText}
 }
 
 //nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:'252'})
