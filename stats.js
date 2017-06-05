@@ -144,6 +144,10 @@ exports.genPlayerSummary = function(nbaName,playerCareerStats){
     var ppg = round(careerTotals['pts']/gamesPlayed,1)
     var apg = round(careerTotals['ast']/gamesPlayed,1)
     var rpg = round(careerTotals['reb']/gamesPlayed,1)
+    var before1973 = false      //blocks&steals not recorded before 1973
+    if(careerTotals['stl']===null){
+        before1973 = true
+    }
     var spg = round(careerTotals['stl']/gamesPlayed,1)
     var bpg = round(careerTotals['blk']/gamesPlayed,1)
     var fg_pct = round(careerTotals['fg_pct']*100,0)
@@ -159,10 +163,16 @@ exports.genPlayerSummary = function(nbaName,playerCareerStats){
         displayText += rpg + ' reb ' + apg + ' ast ' + 'per game '
         speech += rpg + ' rebounds, and ' + apg + ' assists ' + 'per game '
     }
-    displayText += 'on ' + fg_pct+'/'+fg3_pct+'/'+ft_pct+ ' shooting, '
-    speech += 'on ' + fg_pct+'/'+fg3_pct+'/'+ft_pct+ ' shooting, '
-    displayText += 'with ' + spg + ' stl and ' + bpg + ' blk per game.'
-    speech += 'with ' + spg + ' steals and ' + bpg + ' blocks per game.'
+    displayText += 'on ' + fg_pct+'/'+fg3_pct+'/'+ft_pct+ ' shooting'
+    speech += 'on ' + fg_pct+'/'+fg3_pct+'/'+ft_pct+ ' shooting'
+    if(before1973){
+        displayText += '.'
+        speech += '.'
+    }
+    else{
+        displayText += ', with ' + spg + ' stl and ' + bpg + ' blk per game.'
+        speech += ', with ' + spg + ' steals and ' + bpg + ' blocks per game.'
+    }
     return {speech:speech,displayText:displayText}
 }
 
