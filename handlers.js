@@ -15,6 +15,7 @@ function conError(res){
 
 exports.scores = function(reqBody,res){
     var timestamp = reqBody.result.timestamp
+    var date
     if(reqBody.result.parameters.date === ''){ //use cur date if none provided
         var dateObj = moment(timestamp) //utc time
         dateObj.subtract(4,'hours')    //change to EST time
@@ -24,12 +25,12 @@ exports.scores = function(reqBody,res){
         date = dateObj.format('YMMDD') //change to 20170504 format
     }
     else{
-        var date = reqBody.result.parameters.date
+        date = reqBody.result.parameters.date
         date = date.replace(/-/g,'') //change to 20170504 format
     }
     console.log(date)
     nba.data.scoreboard({date:date})
-        .then(res => stats.genGames(res,date),error.scoresError)
+        .then(result => stats.genGames(result,date),error.scoresError)
         .then(response => {
             res.json({
                 speech:response,
@@ -39,12 +40,14 @@ exports.scores = function(reqBody,res){
         })
 }
 
-exports.statPerGame = function(reqBody,res){
-    var stat = reqBody.result.parameters['Stat_Type_Per_Game']
+exports.statsPerGame = function(reqBody,res){
     var nbaName = reqBody.result.parameters['NBA_Name']
+    var season = reqBody.result.parameters['NBA_Season']
+    var stat = reqBody.result.parameters['Stat_Type_Per_Game']
     var pid = stats.getID(nbaName)
-    nba.stats.playerCareerStats({PerMode:'PerGame',PlayerID:pid})
-             .then(res => stats.genStatPerGame(stat,nbaName,res))
+
+    nba.stats.playerCareerStats({PerMode:'Totals',PlayerID:pid})
+             .then(result => stats.genStatsPerGame(nbaName,season,stat,result))
              .then(response => {
                  res.json({
                      speech:response,
@@ -58,7 +61,7 @@ exports.trueShooting = function(reqBody,res){
     var nbaName = reqBody.result.parameters['NBA_Name']
     var pid = stats.getID(nbaName)
     nba.stats.playerCareerStats({PerMode:'Totals',PlayerID:pid})
-             .then(res => stats.genTS(nbaName,res))
+             .then(result => stats.genTS(nbaName,result))
              .then(response => {
                  res.json({
                      speech:response,
@@ -66,19 +69,4 @@ exports.trueShooting = function(reqBody,res){
                      source:'stats.nba.com'
                  })
              })
-}
-
-exports.playerSummary = function(reqBody, res){
-    var nbaName = reqBody.result.parameters['NBA_Name']
-    var pid = stats.getID(nbaName)
-    nba.stats.playerCareerStats({PerMode:'Totals',PlayerID:pid})
-             .then(res => stats.genPlayerSummary(nbaName,res))
-             .then(responseObj => {
-                 res.json({
-                     speech:responseObj.speech,
-                     displayText:responseObj.displayText,
-                     source:'stats.nba.com'
-                 })
-             })
-
 }

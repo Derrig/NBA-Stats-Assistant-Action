@@ -19,19 +19,16 @@ rest.post('/hook', function (req,res){
         case ('NBA Scores'):
             handlers.scores(reqBody,res)
             break
-        case ('Stat Per Game'):
-            handlers.statPerGame(reqBody,res)
+        case ('Stats Per Game'):
+            handlers.statsPerGame(reqBody,res)
             break
         case('True Shooting'):
             handlers.trueShooting(reqBody,res)
             break
-        case('Player Summary'):
-            handlers.playerSummary(reqBody,res)
-            break
         default:
             res.json({
                     speech:'I\'m not sure what you are asking.',
-                    displayText:response,
+                    displayText:'I\'m not sure what you are asking.',
                     source:''
             })
     }

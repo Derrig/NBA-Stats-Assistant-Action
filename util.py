@@ -20,5 +20,18 @@ def toNameJson(l):
     #return dictJson
     return json.dumps(dictJson)
 
+def nbaSeasonJSON():
+    dictJson = []
+    i = 1946
+    while i < 2017:
+        season = OrderedDict()
+        season['value'] = str(i) +'-'+ str(i+1)[-2:]
+        synonyms = []
+        synonyms.append(str(i+1))
+        synonyms.append(str(i)+'-'+str(i+1))
+        season['synonyms'] = synonyms
+        dictJson.append(season)
+        i += 1
+    return json.dumps(dictJson)
 
 #open('NBA_Name_Entity.json','w+').write(x)
