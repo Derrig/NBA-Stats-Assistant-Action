@@ -4,7 +4,7 @@ Webhook for querying [stats.nba.com](http://www.stats.nba.com) built with Node.j
 Built using [api.ai](http://www.api.ai).
 ### Currently supported queries
 * NBA scores on any date
-* Player per game statistics
+* Player per game statistics (career or specific season)
     * Points
     * Rebounds
     * Assists
