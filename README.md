@@ -11,7 +11,7 @@ Built using [api.ai](http://www.api.ai).
     * Steals
     * Blocks
     * Turnovers
-* Player true shooting average
+* Player true shooting average (career or specific season)
 
 ### Try me out
 http://derrig.me/projects/nba-stats/
