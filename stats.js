@@ -220,18 +220,51 @@ function genPlayerSummary(nbaName,season,playerCareerStats){
     return response
 }
 
-function getTSVal(playerCareerStats){
-    var careerTotals = playerCareerStats['CareerTotalsRegularSeason'][0]
-    var fga = careerTotals['fga']
-    var fta = careerTotals['fta']
-    var pts = careerTotals['pts']
+function getTSVal(season,playerCareerStats){
+    var totals
+    if(season === ''){
+        totals = playerCareerStats['CareerTotalsRegularSeason'][0]
+        console.log(totals)
+    }
+    else{
+        totals = getYearStats(season,playerCareerStats)
+        if(totals === null){//player did not play during desired season
+            return nbaName + ' did not play in the ' + season + ' NBA season.'
+        }
+    }
+    var fga = totals['fga']
+    var fta = totals['fta']
+    var pts = totals['pts']
     var ts = pts/(2*(fga+.44*fta))
     return round(ts*100,1) //convert .52321... to 52.3...
 }
 
-exports.genTS = function(nbaName,playerCareerStats){
-    var ts = getTSVal(playerCareerStats)
-    return nbaName + ' has a career true shooting percentage of ' + ts + '%.'
+exports.genTS = function(nbaName,season,playerCareerStats){
+    var ts
+    var totals
+    if(season === ''){
+        totals = playerCareerStats['CareerTotalsRegularSeason'][0]
+        console.log(totals)
+    }
+    else{
+        totals = getYearStats(season,playerCareerStats)
+        if(totals === null){//player did not play during desired season
+            return nbaName + ' did not play in the ' + season + ' NBA season.'
+        }
+    }
+    var fga = totals['fga']
+    var fta = totals['fta']
+    var pts = totals['pts']
+    ts = pts/(2*(fga+.44*fta))
+    ts = round(ts*100,1) //convert .52321... to 52.3...
+    if(season === ''){
+        return nbaName + ' has a career true shooting percentage of ' + ts + '%.'
+    }
+    else{
+        return 'In the ' + season + ' NBA season, ' + nbaName
+                        + ' had a true shooting percentage of '
+                        + ts + '%.'
+    }
     //console.log(this.round(ts,3))
 }
 

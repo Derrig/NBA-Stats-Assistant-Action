@@ -59,9 +59,10 @@ exports.statsPerGame = function(reqBody,res){
 
 exports.trueShooting = function(reqBody,res){
     var nbaName = reqBody.result.parameters['NBA_Name']
+    var season = reqBody.result.parameters['NBA_Season']
     var pid = stats.getID(nbaName)
     nba.stats.playerCareerStats({PerMode:'Totals',PlayerID:pid})
-             .then(result => stats.genTS(nbaName,result))
+             .then(result => stats.genTS(nbaName,season,result))
              .then(response => {
                  res.json({
                      speech:response,
